@@ -53,7 +53,7 @@ namespace :dev do
   task add_subjects: :environment do
     file_name = 'subjects.txt'
     file_path = File.join(DEFAULT_FILES_PATH, file_name)
-    
+
     File.open(file_path, 'r').each do |line|
       Subject.create!(description: line.strip)
     end
@@ -70,6 +70,15 @@ namespace :dev do
         elect_true_answer(answers_array)
 
         Question.create!(params[:question])
+      end
+    end
+  end
+
+  desc "Reseta o contador dos assuntos"
+  task reset_subject_counter: :environment do
+    show_spinner("Resetando contador dos assuntos...") do
+      Subject.all.each do |subject|
+        Subject.reset_counters(subject.id, :questions)
       end
     end
   end
@@ -105,6 +114,6 @@ namespace :dev do
     spinner = TTY::Spinner.new("[:spinner] #{msg_start}")
     spinner.auto_spin
     yield
-    spinner.success("(#{msg_end})")    
+    spinner.success("(#{msg_end})")
   end
 end
